@@ -1,0 +1,16 @@
+# Ignore the virtual environment directory
+venv/
+
+# Ignore the .env file
+.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore SQLite database file
+transcripts.db
+
+# Ignore any other sensitive or build files
+.DS_Store
+*.log
