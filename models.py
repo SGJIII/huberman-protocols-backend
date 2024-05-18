@@ -30,7 +30,31 @@ def save_transcript(title, url, content):
         print(f"Failed to insert or replace transcript at {url}: {e}")
     finally:
         conn.close()
-        
+
+def get_all_transcripts():
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    c.execute('SELECT * FROM transcripts')
+    transcripts = c.fetchall()
+    conn.close()
+    return transcripts
+
+def get_transcript_by_id(transcript_id):
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    c.execute('SELECT * FROM transcripts WHERE id = ?', (transcript_id,))
+    transcript = c.fetchone()
+    conn.close()
+    return transcript
+
+def search_transcripts(query):
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    query = f"%{query}%"
+    c.execute('SELECT * FROM transcripts WHERE title LIKE ? OR content LIKE ?', (query, query))
+    results = c.fetchall()
+    conn.close()
+    return results
+
 if __name__ == "__main__":
     init_db()
-

@@ -28,14 +28,22 @@
 <body>
     <div class="container chat-container">
         <h1>Huberman Protocol Chatbot</h1>
-        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-box" id="chat-box">
+            <div class="bot-message">Which episode would you like to create a protocol from or what would you like to improve in your life?</div>
+        </div>
         <div class="form-group">
             <input type="text" class="form-control chat-input" id="user-input" placeholder="Type your message here...">
             <button class="btn btn-primary chat-send" onclick="sendMessage()">Send</button>
         </div>
+        <div class="form-group" id="email-form" style="display:none;">
+            <input type="email" class="form-control" id="user-email" placeholder="Enter your email...">
+            <button class="btn btn-primary" onclick="sendEmail()">Send PDF</button>
+        </div>
     </div>
 
     <script>
+        let protocolGenerated = false;
+
         function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             const chatBox = document.getElementById('chat-box');
@@ -59,6 +67,12 @@
                     botMessage.className = 'bot-message';
                     botMessage.textContent = data.response;
                     chatBox.appendChild(botMessage);
+
+                    if (!protocolGenerated) {
+                        protocolGenerated = true;
+                        const emailForm = document.getElementById('email-form');
+                        emailForm.style.display = 'block';
+                    }
                 } else {
                     console.error(data.message);
                 }
@@ -66,6 +80,27 @@
             .catch(error => console.error('Error:', error));
 
             document.getElementById('user-input').value = '';
+        }
+
+        function sendEmail() {
+            const userEmail = document.getElementById('user-email').value;
+
+            fetch('/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: userEmail })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Email sent successfully!');
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>

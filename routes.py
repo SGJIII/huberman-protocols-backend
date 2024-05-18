@@ -1,5 +1,5 @@
 from flask import jsonify, request, render_template
-from scraper import scrape_transcripts  # Importing scrape_transcripts
+from scraper import scrape_transcripts
 from models import get_all_transcripts, get_transcript_by_id
 from chatbot import generate_protocol
 
@@ -43,3 +43,4 @@ def configure_routes(app):
             return jsonify({'status': 'success', 'response': response}), 200
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+
