@@ -15,16 +15,24 @@ def init_db():
         )
     ''')
     conn.commit()
+    
+    # Check if the 'summary' column exists and add it if not
+    c.execute('PRAGMA table_info(transcripts)')
+    columns = [column[1] for column in c.fetchall()]
+    if 'summary' not in columns:
+        c.execute('ALTER TABLE transcripts ADD COLUMN summary TEXT')
+        conn.commit()
+
     conn.close()
 
-def save_transcript(title, url, content):
+def save_transcript(title, url, content, summary):
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     try:
         c.execute('''
-            INSERT OR REPLACE INTO transcripts (title, url, content)
-            VALUES (?, ?, ?)
-            ''', (title, url, content))
+            INSERT OR REPLACE INTO transcripts (title, url, content, summary)
+            VALUES (?, ?, ?, ?)
+            ''', (title, url, content, summary))
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(f"Failed to insert or replace transcript at {url}: {e}")
@@ -51,7 +59,7 @@ def search_transcripts(query):
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     query = f"%{query}%"
-    c.execute('SELECT * FROM transcripts WHERE title LIKE ? OR content LIKE ?', (query, query))
+    c.execute('SELECT id, title, url, content, summary FROM transcripts WHERE title LIKE ? OR content LIKE ?', (query, query))
     results = c.fetchall()
     conn.close()
     return results

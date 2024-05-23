@@ -3,6 +3,13 @@ from bs4 import BeautifulSoup
 import json
 import re
 from models import save_transcript
+import logging
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
 
 def get_transcript_links(base_url):
     links = []
@@ -24,9 +31,9 @@ def get_transcript_links(base_url):
                 links.extend(mapped_links)
 
         else:
-            print(f"Failed to fetch {base_url}: Status code {response.status_code}")
+            logging.error(f"Failed to fetch {base_url}: Status code {response.status_code}")
     except requests.RequestException as e:
-        print(f"Failed to retrieve links: {e}")
+        logging.error(f"Failed to retrieve links: {e}")
     return links
 
 def scrape_transcripts():
@@ -42,22 +49,27 @@ def scrape_transcripts():
                     data = json.loads(script_tag.string)
                     transcript_entries = data['props']['pageProps']['transcript']
                     title = data['props']['pageProps']['title'] if 'title' in data['props']['pageProps'] else 'No title'
-                    
+
                     # Aggregate text, assuming values are plain text
                     full_transcript = " ".join(transcript_entries.values())
-                    
-                    print(f"Attempting to save transcript: {title}")
-                    save_transcript(title, url, full_transcript)
-                    print(f"Saved transcript: {title}")
+
+                    # Extracting the summary from the JSON data
+                    summary_obj = data['props']['pageProps']['summary']
+                    summary = " ".join([summary_obj[key]['summary'] for key in summary_obj.keys()])
+
+                    logging.info(f"Attempting to save transcript: {title}")
+                    save_transcript(title, url, full_transcript, summary)
+                    logging.info(f"Saved transcript: {title}")
                 else:
-                    print(f"No transcript found for {url}")
+                    logging.error(f"No transcript found for {url}")
             else:
-                print(f"Failed to fetch {url}: Status code {response.status_code}")
+                logging.error(f"Failed to fetch {url}: Status code {response.status_code}")
         except requests.RequestException as e:
-            print(f"Failed to process {url}: {e}")
+            logging.error(f"Failed to process {url}: {e}")
         except json.JSONDecodeError as e:
-            print(f"JSON decoding failed for {url}: {e}")
+            logging.error(f"JSON decoding failed for {url}: {e}")
 
 if __name__ == '__main__':
     scrape_transcripts()
+
 

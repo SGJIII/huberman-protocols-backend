@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
-from models import search_transcripts
+from models import get_transcript_by_id
 from fpdf import FPDF
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -13,28 +13,22 @@ load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def generate_protocol(user_input):
-    transcripts = search_transcripts(user_input)
-    if not transcripts:
-        return "No relevant transcripts found."
+def generate_protocol(episode_id):
+    transcript = get_transcript_by_id(episode_id)
+    if not transcript:
+        return "No relevant transcript found."
 
-    # Extract excerpts from the found transcripts
-    excerpts = []
-    for transcript in transcripts:
-        excerpts.append(transcript[3][:1000])  # Taking the first 1000 characters as an excerpt
+    summary = transcript[4]  # Use the summary from the selected episode
 
-    # Combine all excerpts into one large string
-    combined_excerpts = ' '.join(excerpts)
-    
-    # Use the combined excerpts to generate a response
-    prompt = f"The user wants to: {user_input}. Based on the following transcript excerpts, provide a Huberman protocol: {combined_excerpts}"
+    # Use the summary to generate a response
+    prompt = f"The user wants an easy to use protocol from: {episode_id}. please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implament into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
 
     response = client.chat.completions.create(
+        model="gpt-4-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ],
-        model="gpt-3.5-turbo",
     )
     
     return response.choices[0].message.content.strip()
@@ -43,11 +37,11 @@ def update_protocol(user_input, protocol_text):
     prompt = f"The current protocol is: {protocol_text}. The user wants to make the following changes: {user_input}. Update the protocol accordingly."
 
     response = client.chat.completions.create(
+        model="gpt-4-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ],
-        model="gpt-3.5-turbo",
     )
     
     return response.choices[0].message.content.strip()
