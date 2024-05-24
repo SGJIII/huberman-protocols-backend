@@ -3,8 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class Transcript(db.Model):
-    __tablename__ = 'transcripts'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     url = db.Column(db.String(255), unique=True)
     content = db.Column(db.Text)
@@ -14,8 +13,19 @@ def init_db():
     db.create_all()
 
 def save_transcript(title, url, content, summary):
-    transcript = Transcript(title=title, url=url, content=content, summary=summary)
-    db.session.add(transcript)
+    existing_transcript = Transcript.query.filter_by(url=url).first()
+    if existing_transcript:
+        # Update the existing transcript
+        existing_transcript.title = title
+        existing_transcript.content = content
+        existing_transcript.summary = summary
+        print(f"Transcript updated: {title}")
+    else:
+        # Add a new transcript
+        transcript = Transcript(title=title, url=url, content=content, summary=summary)
+        db.session.add(transcript)
+        print(f"Transcript saved: {title}")
+    
     db.session.commit()
 
 def get_all_transcripts():
