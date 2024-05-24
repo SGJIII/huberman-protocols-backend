@@ -28,12 +28,18 @@
 
     <div class="container">
         <h1>{{ transcript.title }}</h1>
-        <h3>{{ transcript.title }} Episode Summary</h3>
-        <p>{{ transcript.summary }}</p>
+        <h3>Episode Summary</h3>
+        <div>
+            {% for line in transcript.summary.split(' - ') %}
+                <p>{{ line }}</p>
+            {% endfor %}
+        </div>
         <h3>Full Transcript of {{ transcript.title }}</h3>
-        <p>{{ transcript.content }}</p>
+        <div>
+            {% for line in transcript.content.split(' --> ') %}
+                <p>{{ line }}</p>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
-
-
