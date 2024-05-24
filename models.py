@@ -1,68 +1,31 @@
-import sqlite3
-import re
+from flask_sqlalchemy import SQLAlchemy
 
-DATABASE = 'transcripts.db'
+db = SQLAlchemy()
+
+class Transcript(db.Model):
+    __tablename__ = 'transcripts'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(255))
+    url = db.Column(db.String(255), unique=True)
+    content = db.Column(db.Text)
+    summary = db.Column(db.Text)
 
 def init_db():
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS transcripts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            url TEXT UNIQUE,
-            content TEXT
-        )
-    ''')
-    conn.commit()
-    
-    # Check if the 'summary' column exists and add it if not
-    c.execute('PRAGMA table_info(transcripts)')
-    columns = [column[1] for column in c.fetchall()]
-    if 'summary' not in columns:
-        c.execute('ALTER TABLE transcripts ADD COLUMN summary TEXT')
-        conn.commit()
-
-    conn.close()
+    from app import app
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
 
 def save_transcript(title, url, content, summary):
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-    try:
-        c.execute('''
-            INSERT OR REPLACE INTO transcripts (title, url, content, summary)
-            VALUES (?, ?, ?, ?)
-            ''', (title, url, content, summary))
-        conn.commit()
-    except sqlite3.IntegrityError as e:
-        print(f"Failed to insert or replace transcript at {url}: {e}")
-    finally:
-        conn.close()
+    transcript = Transcript(title=title, url=url, content=content, summary=summary)
+    db.session.add(transcript)
+    db.session.commit()
 
 def get_all_transcripts():
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-    c.execute('SELECT * FROM transcripts')
-    transcripts = c.fetchall()
-    conn.close()
-    return transcripts
+    return Transcript.query.all()
 
 def get_transcript_by_id(transcript_id):
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-    c.execute('SELECT * FROM transcripts WHERE id = ?', (transcript_id,))
-    transcript = c.fetchone()
-    conn.close()
-    return transcript
+    return Transcript.query.get(transcript_id)
 
 def search_transcripts(query):
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-    query = f"%{query}%"
-    c.execute('SELECT id, title, url, content, summary FROM transcripts WHERE title LIKE ? OR content LIKE ?', (query, query))
-    results = c.fetchall()
-    conn.close()
-    return results
-
-if __name__ == "__main__":
-    init_db()
+    return Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
