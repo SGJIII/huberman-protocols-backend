@@ -39,3 +39,4 @@ def get_transcript_by_id(transcript_id):
 
 def search_transcripts(query):
     return Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
+
