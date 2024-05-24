@@ -4,6 +4,7 @@ import json
 import re
 from models import save_transcript
 import logging
+from app import app  # Import the Flask app
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ def get_transcript_links(base_url):
             links.extend(direct_links)
 
             # Finding idMapping and constructing additional links
-            script_tag = soup.find('script', text=re.compile('idMapping'))
+            script_tag = soup.find('script', string=re.compile('idMapping'))
             if script_tag:
                 data = json.loads(script_tag.string)
                 id_mapping = data['props']['pageProps']['idMapping']
@@ -70,6 +71,6 @@ def scrape_transcripts():
             logging.error(f"JSON decoding failed for {url}: {e}")
 
 if __name__ == '__main__':
-    scrape_transcripts()
-
+    with app.app_context():  # Use the application context
+        scrape_transcripts()
 
