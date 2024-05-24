@@ -47,7 +47,7 @@ def configure_routes(app):
             episodes = [{"title": t['title']} for t in transcripts]
             return jsonify({"status": "success", "episodes": episodes}), 200
         except Exception as e:
-            return jsonify({"status": 'error', "message": str(e)}), 500
+            return jsonify({"status": 'error', 'message': str(e)}), 500
 
     @app.route('/chat', methods=['POST'])
     def chat():
@@ -105,4 +105,3 @@ def configure_routes(app):
             return redirect(url_for('blog_post', title=title_slug))
         else:
             return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
-
