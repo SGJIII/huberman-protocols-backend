@@ -55,13 +55,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         let protocolGenerated = false;
-
+    
         $(document).ready(function() {
             $('#episode-select').select2({
                 placeholder: 'Select an episode',
                 allowClear: true
             });
-
+    
             fetch('/episodes')
                 .then(response => response.json())
                 .then(data => {
@@ -73,10 +73,10 @@
                 })
                 .catch(error => console.error('Error fetching episodes:', error));
         });
-
+    
         function sendMessage() {
             const selectedEpisode = document.getElementById('episode-select').value;
-
+    
             fetch('/chat', {
                 method: 'POST',
                 headers: {
@@ -91,23 +91,24 @@
                     const converter = new showdown.Converter();
                     const html = converter.makeHtml(data.response);
                     results.innerHTML = html;
-
+    
                     if (!protocolGenerated) {
                         protocolGenerated = true;
                         const emailForm = document.getElementById('email-form');
                         emailForm.style.display = 'block';
                     }
                 } else {
-                    console.error(data.message);
+                    const results = document.getElementById('results');
+                    results.innerHTML = `Error generating protocol: ${data.message}`;
                 }
             })
             .catch(error => console.error('Error:', error));
         }
-
+    
         function sendEmail() {
             const userEmail = document.getElementById('user-email').value;
             const results = document.getElementById('results').innerText;
-
+    
             fetch('/send_protocol', {
                 method: 'POST',
                 headers: {
@@ -125,6 +126,6 @@
             })
             .catch(error => console.error('Error:', error));
         }
-    </script>
+    </script>    
 </body>
 </html>

@@ -31,8 +31,16 @@ def get_transcript_by_id(transcript_id):
     else:
         return None
 
+def get_transcript_by_title(title):
+    transcript = Transcript.query.filter_by(title=title).first()
+    if transcript:
+        return {'id': transcript.id, 'title': transcript.title, 'url': transcript.url, 'content': transcript.content, 'summary': transcript.summary}
+    else:
+        return None
+
 def search_transcripts(query):
     results = Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
     return [{'id': r.id, 'title': r.title, 'url': r.url, 'content': r.content, 'summary': r.summary} for r in results]
+
 
 

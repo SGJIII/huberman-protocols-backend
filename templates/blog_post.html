@@ -1,9 +1,10 @@
-<!-- blog_post.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ transcript['title'] }} - Huberman Protocol</title>
+    <title>{{ transcript.title }} - Huberman Protocol</title>
+    <meta name="description" content="{{ transcript.summary }}">
+    <meta name="keywords" content="Huberman, Podcast, Transcript, {{ transcript.title }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -26,8 +27,12 @@
     </nav>
 
     <div class="container">
-        <h1>{{ transcript['title'] }}</h1>
-        <p>{{ transcript['content'] }}</p>
+        <h1>{{ transcript.title }}</h1>
+        <h3>{{ transcript.title }} Episode Summary</h3>
+        <p>{{ transcript.summary }}</p>
+        <h3>Full Transcript of {{ transcript.title }}</h3>
+        <p>{{ transcript.content }}</p>
     </div>
 </body>
 </html>
+

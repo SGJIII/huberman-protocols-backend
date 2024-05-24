@@ -1,8 +1,9 @@
-from flask import jsonify, request, render_template
+from flask import jsonify, request, render_template, url_for, redirect
 from scraper import scrape_transcripts
-from models import get_all_transcripts, get_transcript_by_id
+from models import get_all_transcripts, get_transcript_by_id, get_transcript_by_title
 from chatbot import generate_protocol, update_protocol, send_protocol_via_email
 import logging
+from slugify import slugify
 
 def configure_routes(app):
     @app.route('/')
@@ -43,7 +44,7 @@ def configure_routes(app):
     def get_episodes():
         try:
             transcripts = get_all_transcripts()
-            episodes = [{"id": t['id'], "title": t['title']} for t in transcripts]
+            episodes = [{"title": t['title']} for t in transcripts]
             return jsonify({"status": "success", "episodes": episodes}), 200
         except Exception as e:
             return jsonify({"status": 'error', "message": str(e)}), 500
@@ -85,13 +86,23 @@ def configure_routes(app):
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
 
-    @app.route('/blog/<int:transcript_id>', methods=['GET'])
-    def blog_post(transcript_id):
+    @app.route('/blog/<title>', methods=['GET'])
+    def blog_post(title):
         try:
-            transcript = get_transcript_by_id(transcript_id)
+            transcript = get_transcript_by_title(title)
             if transcript:
                 return render_template('blog_post.html', transcript=transcript)
             else:
                 return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    @app.route('/redirect_blog/<int:transcript_id>', methods=['GET'])
+    def redirect_blog(transcript_id):
+        transcript = get_transcript_by_id(transcript_id)
+        if transcript:
+            title_slug = slugify(transcript['title'])
+            return redirect(url_for('blog_post', title=title_slug))
+        else:
+            return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
+
