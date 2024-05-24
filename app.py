@@ -3,6 +3,8 @@ from models import init_db, db
 from routes import configure_routes
 from dotenv import load_dotenv
 import os
+from sitemap import sitemap_blueprint
+from robots import robots_blueprint
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -18,6 +20,8 @@ with app.app_context():
 
 # Configure routes
 configure_routes(app)
+app.register_blueprint(sitemap_blueprint)
+app.register_blueprint(robots_blueprint)
 
 if __name__ == '__main__':
     app.run(debug=True)
