@@ -1,5 +1,4 @@
 import os
-import logging
 from openai import OpenAI
 from dotenv import load_dotenv
 from models import get_transcript_by_id
@@ -15,31 +14,24 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_protocol(episode_id):
-    try:
-        logging.info(f"Generating protocol for episode_id: {episode_id}")
-        transcript = get_transcript_by_id(episode_id)
-        if not transcript:
-            logging.error(f"No relevant transcript found for episode_id: {episode_id}")
-            return "No relevant transcript found."
+    transcript = get_transcript_by_id(episode_id)
+    if not transcript:
+        return "No relevant transcript found."
 
-        summary = transcript.summary  # Adjust this if summary is not the correct attribute
+    summary = transcript[4]  # Use the summary from the selected episode
 
-        # Use the summary to generate a response
-        prompt = f"The user wants an easy to use protocol from: {episode_id}. please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implement into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
+    # Use the summary to generate a response
+    prompt = f"The user wants an easy to use protocol from: {episode_id}. please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implament into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
 
-        response = client.chat.completions.create(
-            model="gpt-4-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
-            ],
-        )
-
-        logging.info(f"Protocol generated successfully for episode_id: {episode_id}")
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        logging.error(f"Error generating protocol for episode_id {episode_id}: {e}")
-        return f"Error generating protocol: {e}"
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+    )
+    
+    return response.choices[0].message.content.strip()
 
 def update_protocol(user_input, protocol_text):
     prompt = f"The current protocol is: {protocol_text}. The user wants to make the following changes: {user_input}. Update the protocol accordingly."
@@ -89,4 +81,3 @@ def send_protocol_via_email(protocol_text, user_email):
         return "Email sent successfully."
     except Exception as e:
         return f"Failed to send email: {str(e)}"
-
