@@ -11,10 +11,7 @@ class Transcript(db.Model):
     summary = db.Column(db.Text)
 
 def init_db():
-    from app import app
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
+    db.create_all()
 
 def save_transcript(title, url, content, summary):
     transcript = Transcript(title=title, url=url, content=content, summary=summary)

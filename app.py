@@ -1,5 +1,5 @@
 from flask import Flask
-from models import init_db
+from models import init_db, db
 from routes import configure_routes
 from dotenv import load_dotenv
 import os
@@ -11,7 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
-init_db()
+db.init_app(app)
+with app.app_context():
+    init_db()
 
 # Configure routes
 configure_routes(app)
