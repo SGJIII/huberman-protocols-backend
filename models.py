@@ -1,3 +1,4 @@
+# models.py
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -13,18 +14,22 @@ def init_db():
     db.create_all()
 
 def save_transcript(title, url, content, summary):
-    existing_transcript = Transcript.query.filter_by(url=url).first()
-    if existing_transcript:
-        existing_transcript.title = title
-        existing_transcript.content = content
-        existing_transcript.summary = summary
-        print(f"Transcript updated: {title}")
-    else:
-        transcript = Transcript(title=title, url=url, content=content, summary=summary)
-        db.session.add(transcript)
-        print(f"Transcript saved: {title}")
-    
-    db.session.commit()
+    try:
+        existing_transcript = Transcript.query.filter_by(url=url).first()
+        if existing_transcript:
+            existing_transcript.title = title
+            existing_transcript.content = content
+            existing_transcript.summary = summary
+            db.session.commit()
+            print(f"Transcript updated: {title}")
+        else:
+            transcript = Transcript(title=title, url=url, content=content, summary=summary)
+            db.session.add(transcript)
+            db.session.commit()
+            print(f"Transcript saved: {title}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving transcript {title}: {e}")
 
 def get_all_transcripts():
     return Transcript.query.all()

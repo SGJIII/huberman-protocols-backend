@@ -1,12 +1,12 @@
+# scraper.py
 import requests
 from bs4 import BeautifulSoup
 import json
 import re
 from models import save_transcript
 import logging
-
-# Load environment variables from .env file
 from dotenv import load_dotenv
+
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
@@ -30,7 +30,8 @@ def get_transcript_links(base_url):
                 mapped_links = [f"{base_url.rstrip('/')}/post/{post_id}" for post_id in id_mapping.values()]
                 links.extend(mapped_links)
 
-            logging.info(f"Found {len(links)} transcript links")
+            links = list(set(links))  # Ensure unique links
+            logging.info(f"Found {len(links)} unique transcript links")
         else:
             logging.error(f"Failed to fetch {base_url}: Status code {response.status_code}")
     except requests.RequestException as e:
@@ -40,8 +41,9 @@ def get_transcript_links(base_url):
 def scrape_transcripts():
     base_url = "https://www.hubermantranscripts.com/"
     links = get_transcript_links(base_url)
-    logging.info(f"Total links to process: {len(links)}")
+    logging.info(f"Total unique links to process: {len(links)}")
     for url in links:
+        logging.info(f"Processing URL: {url}")
         try:
             response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
             if response.status_code == 200:
