@@ -22,7 +22,7 @@ def generate_protocol(episode_id):
             logging.error(f"No relevant transcript found for episode_id: {episode_id}")
             return "No relevant transcript found."
 
-        summary = transcript.summary  # Adjust this if summary is not the correct attribute
+        summary = transcript['summary']  # Use the summary from the dictionary
 
         # Use the summary to generate a response
         prompt = f"The user wants an easy to use protocol from: {episode_id}. please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implement into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
@@ -89,4 +89,5 @@ def send_protocol_via_email(protocol_text, user_email):
         return "Email sent successfully."
     except Exception as e:
         return f"Failed to send email: {str(e)}"
+
 
