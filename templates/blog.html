@@ -1,3 +1,4 @@
+<!-- blog.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,9 +29,9 @@
         <h1>Blog</h1>
         <div class="list-group">
             {% for transcript in transcripts %}
-                <a href="/blog/{{ transcript[0] }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">{{ transcript[1] }}</h5>
-                    <p class="mb-1">{{ transcript[4][:200] }}...</p>
+                <a href="/blog/{{ transcript['id'] }}" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ transcript['title'] }}</h5>
+                    <p class="mb-1">{{ transcript['content'][:200] }}...</p>
                 </a>
             {% endfor %}
         </div>

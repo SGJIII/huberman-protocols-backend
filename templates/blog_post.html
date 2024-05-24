@@ -1,8 +1,9 @@
+<!-- blog_post.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ transcript[1] }} - Huberman Protocol</title>
+    <title>{{ transcript['title'] }} - Huberman Protocol</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -25,8 +26,8 @@
     </nav>
 
     <div class="container">
-        <h1>{{ transcript[1] }}</h1>
-        <p>{{ transcript[4] }}</p>
+        <h1>{{ transcript['title'] }}</h1>
+        <p>{{ transcript['content'] }}</p>
     </div>
 </body>
 </html>

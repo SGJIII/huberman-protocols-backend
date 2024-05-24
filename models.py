@@ -15,22 +15,24 @@ def init_db():
 
 def save_transcript(title, url, content, summary):
     existing_transcript = Transcript.query.filter_by(url=url).first()
-    if existing_transcript:
-        # Skip adding this transcript as it already exists
-        print(f"Transcript already exists: {title}")
-    else:
-        # Add a new transcript
+    if existing_transcript is None:
         transcript = Transcript(title=title, url=url, content=content, summary=summary)
         db.session.add(transcript)
         db.session.commit()
-        print(f"Transcript saved: {title}")
 
 def get_all_transcripts():
-    return Transcript.query.all()
+    transcripts = Transcript.query.all()
+    return [{'id': t.id, 'title': t.title, 'url': t.url, 'content': t.content, 'summary': t.summary} for t in transcripts]
 
 def get_transcript_by_id(transcript_id):
-    return Transcript.query.get(transcript_id)
+    transcript = Transcript.query.get(transcript_id)
+    if transcript:
+        return {'id': transcript.id, 'title': transcript.title, 'url': transcript.url, 'content': transcript.content, 'summary': transcript.summary}
+    else:
+        return None
 
 def search_transcripts(query):
-    return Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
+    results = Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
+    return [{'id': r.id, 'title': r.title, 'url': r.url, 'content': r.content, 'summary': r.summary} for r in results]
+
 
