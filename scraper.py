@@ -4,7 +4,6 @@ import json
 import re
 from models import save_transcript
 import logging
-from app import app  # Import the Flask app
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -69,8 +68,3 @@ def scrape_transcripts():
             logging.error(f"Failed to process {url}: {e}")
         except json.JSONDecodeError as e:
             logging.error(f"JSON decoding failed for {url}: {e}")
-
-if __name__ == '__main__':
-    with app.app_context():  # Use the application context
-        scrape_transcripts()
-
