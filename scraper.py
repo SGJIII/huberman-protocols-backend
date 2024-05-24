@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 from models import save_transcript
-import logging
+import logging # Ensure app is imported after db to avoid circular imports
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
