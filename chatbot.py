@@ -25,7 +25,7 @@ def generate_protocol(episode_id):
         summary = transcript['summary']  # Use the summary from the dictionary
 
         # Use the summary to generate a response
-        prompt = f"The user wants an easy to use protocol from: {episode_id}. please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implement into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
+        prompt = f"The user wants an easy to use protocol from episode ID {episode_id}. Please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implement into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
 
         response = client.chat.completions.create(
             model="gpt-4-turbo",
@@ -89,5 +89,3 @@ def send_protocol_via_email(protocol_text, user_email):
         return "Email sent successfully."
     except Exception as e:
         return f"Failed to send email: {str(e)}"
-
-

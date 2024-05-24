@@ -44,7 +44,7 @@ def configure_routes(app):
     def get_episodes():
         try:
             transcripts = get_all_transcripts()
-            episodes = [{"title": t['title']} for t in transcripts]
+            episodes = [{"id": t['id'], "title": t['title']} for t in transcripts]
             return jsonify({"status": "success", "episodes": episodes}), 200
         except Exception as e:
             return jsonify({"status": 'error', 'message': str(e)}), 500
