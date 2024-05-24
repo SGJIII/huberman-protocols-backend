@@ -43,7 +43,7 @@ def configure_routes(app):
     def get_episodes():
         try:
             transcripts = get_all_transcripts()
-            episodes = [{"id": t['id'], "title": t['title']} for t in transcripts]
+            episodes = [{"id": t.id, "title": t.title} for t in transcripts]
             return jsonify({"status": "success", "episodes": episodes}), 200
         except Exception as e:
             return jsonify({"status": 'error', "message": str(e)}), 500
@@ -52,9 +52,12 @@ def configure_routes(app):
     def chat():
         try:
             episode_id = request.json.get('episode_id')
+            app.logger.info(f'Received chat request for episode_id: {episode_id}')
             response = generate_protocol(episode_id)
+            app.logger.info(f'Generated response: {response}')
             return jsonify({'status': 'success', 'response': response}), 200
         except Exception as e:
+            app.logger.error(f'Error in chat route: {e}')
             return jsonify({'status': 'error', 'message': str(e)}), 500
 
     @app.route('/update_protocol', methods=['POST'])
@@ -95,3 +98,4 @@ def configure_routes(app):
                 return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+
