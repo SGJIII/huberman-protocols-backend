@@ -30,6 +30,7 @@ def get_transcript_links(base_url):
                 mapped_links = [f"{base_url.rstrip('/')}/post/{post_id}" for post_id in id_mapping.values()]
                 links.extend(mapped_links)
 
+            logging.info(f"Found {len(links)} transcript links")
         else:
             logging.error(f"Failed to fetch {base_url}: Status code {response.status_code}")
     except requests.RequestException as e:
@@ -68,3 +69,4 @@ def scrape_transcripts():
             logging.error(f"Failed to process {url}: {e}")
         except json.JSONDecodeError as e:
             logging.error(f"JSON decoding failed for {url}: {e}")
+
