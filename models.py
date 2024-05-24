@@ -15,13 +15,11 @@ def init_db():
 def save_transcript(title, url, content, summary):
     existing_transcript = Transcript.query.filter_by(url=url).first()
     if existing_transcript:
-        # Update the existing transcript
         existing_transcript.title = title
         existing_transcript.content = content
         existing_transcript.summary = summary
         print(f"Transcript updated: {title}")
     else:
-        # Add a new transcript
         transcript = Transcript(title=title, url=url, content=content, summary=summary)
         db.session.add(transcript)
         print(f"Transcript saved: {title}")

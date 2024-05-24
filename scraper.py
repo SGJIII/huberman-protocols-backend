@@ -4,6 +4,7 @@ import json
 import re
 from models import save_transcript
 import logging
+from app import app  # Import the Flask app
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -40,6 +41,7 @@ def get_transcript_links(base_url):
 def scrape_transcripts():
     base_url = "https://www.hubermantranscripts.com/"
     links = get_transcript_links(base_url)
+    logging.info(f"Total links to process: {len(links)}")
     for url in links:
         try:
             response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
@@ -69,4 +71,3 @@ def scrape_transcripts():
             logging.error(f"Failed to process {url}: {e}")
         except json.JSONDecodeError as e:
             logging.error(f"JSON decoding failed for {url}: {e}")
-
