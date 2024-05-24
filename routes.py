@@ -76,3 +76,22 @@ def configure_routes(app):
             return jsonify({'status': 'success', 'message': response}), 200
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    @app.route('/blog', methods=['GET'])
+    def blog():
+        try:
+            transcripts = get_all_transcripts()
+            return render_template('blog.html', transcripts=transcripts)
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    @app.route('/blog/<int:transcript_id>', methods=['GET'])
+    def blog_post(transcript_id):
+        try:
+            transcript = get_transcript_by_id(transcript_id)
+            if transcript:
+                return render_template('blog_post.html', transcript=transcript)
+            else:
+                return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500
