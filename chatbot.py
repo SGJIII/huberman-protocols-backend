@@ -25,7 +25,7 @@ def generate_protocol(episode_id):
         summary = transcript['summary']  # Use the summary from the dictionary
 
         # Use the summary to generate a response
-        prompt = f"The user wants an easy to use protocol from episode ID {episode_id}. Please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol that the user can implement into their daily lives to improve their lives based on the context of the summary. Please include only ideas and any helpful products from the summary."
+        prompt = f"The user wants an easy to use protocol from episode ID {episode_id}. Please provide a quick 1 sentence summary of this: {summary}. Based on this, please provide a Huberman protocol and a weekly schedule of how they can implament it into their daily lives daily lives to improve their lives based on the context of the summary. Please include only ideas and  helpful products from the summary and be extremely detailed."
 
         response = client.chat.completions.create(
             model="gpt-4-turbo",
