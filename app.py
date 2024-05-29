@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, request
 from models import init_db, db
 from routes import configure_routes
 from dotenv import load_dotenv
@@ -17,6 +17,12 @@ db.init_app(app)
 # Initialize database
 with app.app_context():
     init_db()
+
+# Redirect www to root domain
+@app.before_request
+def redirect_www():
+    if request.host.startswith('www.'):
+        return redirect(request.url.replace('www.', ''), code=301)
 
 # Configure routes
 configure_routes(app)
