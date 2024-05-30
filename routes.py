@@ -105,3 +105,7 @@ def configure_routes(app):
             return redirect(url_for('blog_post', title=title_slug))
         else:
             return jsonify({'status': 'error', 'message': 'Transcript not found'}), 404
+    
+    @app.route('/privacy_policy', methods=['GET'])
+    def privacy_policy():
+        return render_template('privacy_policy.html')
