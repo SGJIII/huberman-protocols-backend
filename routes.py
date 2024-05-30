@@ -1,9 +1,10 @@
-from flask import jsonify, request, render_template, url_for, redirect
+from flask import jsonify, request, render_template, url_for, redirect, send_from_directory
 from scraper import scrape_transcripts
 from models import get_all_transcripts, get_transcript_by_id, get_transcript_by_title
 from chatbot import generate_protocol, update_protocol, send_protocol_via_email
 import logging
 from slugify import slugify
+import os
 
 def configure_routes(app):
     @app.route('/')
@@ -109,3 +110,7 @@ def configure_routes(app):
     @app.route('/privacy_policy', methods=['GET'])
     def privacy_policy():
         return render_template('privacy_policy.html')
+    
+    @app.route('/ads.txt', methods=['GET'])
+    def ads():
+        return send_from_directory(os.path.abspath(os.path.dirname(__file__)), 'ads.txt')
