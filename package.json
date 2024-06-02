@@ -1,0 +1,17 @@
+{
+  "name": "huberman_protocols",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:frontend": "yarn workspace frontend dev",
+    "dev:backend": "cd backend && flask run",
+    "dev": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\""
+  },
+  "dependencies": {
+    "concurrently": "^6.0.0"
+  }
+}

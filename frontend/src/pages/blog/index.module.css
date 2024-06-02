@@ -1,0 +1,27 @@
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .transcript-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  .transcript-summary {
+    margin-bottom: 20px;
+    color: gray;
+  }
+  
+  .transcript-link {
+    display: block;
+    margin-bottom: 10px;
+    color: blue;
+    text-decoration: underline;
+  }
+  
+  .transcript-link:hover {
+    text-decoration: none;
+  }
+  

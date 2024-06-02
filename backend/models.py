@@ -11,6 +11,12 @@ class Transcript(db.Model):
     content = db.Column(db.Text)
     summary = db.Column(db.Text)
 
+class Protocol(db.Model):
+    __tablename__ = 'protocols'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(255))
+    protocol = db.Column(db.Text)
+
 def init_db():
     db.create_all()
 
@@ -43,6 +49,11 @@ def search_transcripts(query):
     results = Transcript.query.filter((Transcript.title.ilike(f'%{query}%')) | (Transcript.content.ilike(f'%{query}%'))).all()
     return [{'id': r.id, 'title': r.title, 'url': r.url, 'content': r.content, 'summary': r.summary} for r in results]
 
+def save_protocol(user_id, protocol):
+    new_protocol = Protocol(user_id=user_id, protocol=protocol)
+    db.session.add(new_protocol)
+    db.session.commit()
 
-
-
+def get_user_protocols(user_id):
+    protocols = Protocol.query.filter_by(user_id=user_id).all()
+    return [{'id': p.id, 'protocol': p.protocol} for p in protocols]

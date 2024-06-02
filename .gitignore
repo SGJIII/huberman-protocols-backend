@@ -14,3 +14,12 @@ transcripts.db
 # Ignore any other sensitive or build files
 .DS_Store
 *.log
+node_modules/
+
+# Ignore lock files
+package-lock.json
+yarn.lock
+
+# Ignore temporary files
+*.tmp
+*.temp

@@ -1,12 +1,15 @@
 from flask import jsonify, request, render_template, url_for, redirect, send_from_directory
+from flask_cors import CORS
 from scraper import scrape_transcripts
-from models import get_all_transcripts, get_transcript_by_id, get_transcript_by_title
+from models import get_all_transcripts, get_transcript_by_id, get_transcript_by_title, save_protocol, get_user_protocols
 from chatbot import generate_protocol, update_protocol, send_protocol_via_email
 import logging
 from slugify import slugify
 import os
 
 def configure_routes(app):
+    CORS(app)
+
     @app.route('/')
     def home():
         return render_template('index.html')
@@ -76,6 +79,24 @@ def configure_routes(app):
             user_email = request.json.get('email')
             response = send_protocol_via_email(protocol_text, user_email)
             return jsonify({'status': 'success', 'message': response}), 200
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    @app.route('/save_protocol', methods=['POST'])
+    def save_protocol_route():
+        try:
+            user_id = request.json.get('user_id')
+            protocol = request.json.get('protocol')
+            save_protocol(user_id, protocol)
+            return jsonify({'status': 'success', 'message': 'Protocol saved successfully'}), 200
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    @app.route('/get_protocols/<user_id>', methods=['GET'])
+    def get_protocols(user_id):
+        try:
+            protocols = get_user_protocols(user_id)
+            return jsonify({'status': 'success', 'data': protocols}), 200
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
 
