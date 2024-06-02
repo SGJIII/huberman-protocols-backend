@@ -1,17 +1,18 @@
 {
-  "name": "huberman_protocols",
+  "name": "frontend",
   "version": "1.0.0",
-  "private": true,
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "main": "index.js",
   "scripts": {
-    "dev:frontend": "yarn workspace frontend dev",
-    "dev:backend": "cd backend && flask run",
-    "dev": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\""
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
-    "concurrently": "^6.0.0"
+    "@auth0/nextjs-auth0": "^3.5.0",
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
   }
 }
